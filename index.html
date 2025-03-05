@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Bot UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Telegram Bot Interfejs</h1>
+    <button onclick="sendMessage('hello')">👋 Pozdrav</button>
+    <button onclick="sendMessage('options')">📜 Opcije</button>
+    <button onclick="sendMessage('help')">ℹ️ Uputstvo</button>
+
+    <script>
+        function sendMessage(action) {
+            fetch("http://localhost:3000/message", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ action: action })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error("Greška:", error));
+        }
+    </script>
+
+</body>
+</html>
