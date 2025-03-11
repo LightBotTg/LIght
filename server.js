@@ -72,15 +72,11 @@ bot.on("message", async (ctx) => {
     }
 });
 
-// Resetovanje stanja kada se klikne bilo koje dugme (osim Buy & Sell)
-bot.action([ "coin_sniper", "profile", "wallets", "trades", "copy_trade", "settings", "positions", "refresh", "delete_message"], async (ctx) => {
-    resetUserState(ctx);
-});
 
 
 // Coin Sniper dugme
 bot.action("coin_sniper", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         await ctx.reply(
             "Active Snipers: 0\n\nPaste token address to create new sniper!",
@@ -92,46 +88,51 @@ bot.action("coin_sniper", async (ctx) => {
     } catch (err) {
         console.error("❌ Greška pri slanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Dugme Lists
 bot.action("sniper_lists", (ctx) => {
-    resetUserState(ctx);
+    
     ctx.reply("🚧 Still under development");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Brisanje poruke pritiskom na "Close"
 bot.action("delete_message", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
     } catch (err) {
         console.error("❌ Greška pri brisanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Brisanje poruke za Coin Sniper pritiskom na "Close"
 bot.action("delete_sniper_message", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
     } catch (err) {
         console.error("❌ Greška pri brisanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Ostala dugmad
 bot.action("profile", async (ctx) => {
-    resetUserState(ctx);
+    
     await ctx.reply(
         "You don't have any wallet yet, click on \"wallets\" option to create one."
     );
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 const walletMessages = new Map(); // Čuva ID poruka za brisanje
 
 bot.action("wallets", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         const sentMessage = await ctx.reply(
             getWalletText(), // Dinamički generisan tekst
@@ -142,31 +143,35 @@ bot.action("wallets", async (ctx) => {
     } catch (err) {
         console.error("❌ Greška pri slanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("connect_wallet", async (ctx) => {
-    resetUserState(ctx);
+   
     await ctx.reply("Coming soon! Visit our website for more info.");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("generate_wallet", async (ctx) => {
-    resetUserState(ctx);
+    
     await ctx.reply("Coming soon! Visit our website for more info.");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // "Reload" sada menja postojeću poruku umesto da šalje novu
 bot.action("reload_wallet", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         await ctx.editMessageText(getWalletText(), getWalletKeyboard());
     } catch (err) {
         console.error("❌ Greška pri osvežavanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Dugme za brisanje poruke
 bot.action("delete_wallet_message", async (ctx) => {
-    resetUserState(ctx);
+    
     try {
         const messageId = walletMessages.get(ctx.from.id);
         if (messageId) {
@@ -178,6 +183,7 @@ bot.action("delete_wallet_message", async (ctx) => {
     } catch (err) {
         console.error("❌ Greška pri brisanju poruke:", err);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Funkcija koja generiše tekst poruke (možeš je proširiti kasnije)
@@ -196,20 +202,22 @@ function getWalletKeyboard() {
 
 
 bot.action("trades", async (ctx) => {
-    resetUserState(ctx);
+    
     await ctx.reply("You don't have any transactions yet");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("copy_trade", async (ctx) => {
-    resetUserState(ctx);
+    
     await ctx.reply("Send Solana address to copy trade");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Čuvamo stanje dugmadi za svakog korisnika
 const settingsState = new Map();
 
 bot.action("settings", async (ctx) => {
-    resetUserState(ctx);
+    
     const userId = ctx.from.id;
     settingsState.set(userId, {
         antiMev: "🟢",
@@ -220,10 +228,11 @@ bot.action("settings", async (ctx) => {
 
     const message = await ctx.reply(getSettingsMessage(userId), getSettingsKeyboard(userId));
     settingsState.get(userId).messageId = message.message_id;
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action(/^toggle_(antiMev|antiMevSniper|turboTip|feePriority)$/, async (ctx) => {
-    resetUserState(ctx);
+    
     const userId = ctx.from.id;
     const setting = ctx.match[1];
 
@@ -238,7 +247,7 @@ bot.action(/^toggle_(antiMev|antiMevSniper|turboTip|feePriority)$/, async (ctx) 
 });
 
 bot.action("close_settings", async (ctx) => {
-    resetUserState(ctx);
+    
     const userId = ctx.from.id;
     const messageId = settingsState.get(userId)?.messageId;
 
@@ -246,6 +255,7 @@ bot.action("close_settings", async (ctx) => {
         await ctx.deleteMessage(messageId);
         settingsState.delete(userId);
     }
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 // Funkcija za generisanje poruke
@@ -277,8 +287,9 @@ function getSettingsKeyboard(userId) {
 }
 
 bot.action("positions", async (ctx) => {
-    resetUserState(ctx);
+   
     await ctx.reply("No open positions");
+    setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("refresh", (ctx) => ctx.reply("🔄 Refreshing..."));
@@ -290,6 +301,7 @@ bot.on("message", (ctx) => {
     ctx.reply(`🚧 still under development! 
         
         This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! 🔧`);
+        setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.launch();
