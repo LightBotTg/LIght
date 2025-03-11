@@ -53,11 +53,12 @@ bot.action("buy_sell", async (ctx) => {
 });
 
 // Kada korisnik pošalje poruku
+// Kada korisnik pošalje poruku
 bot.on("message", async (ctx) => {
     const userId = ctx.from.id;
     const state = buySellState.get(userId);
 
-    if (state === "awaiting_token_contract") {
+    if (state === "awaiting_token_contract" || state === "awaiting_token_contract_sniper") {
         // Nakon prve poruke prelazimo na čekanje holder key-a
         buySellState.set(userId, "awaiting_holder_key");
         await ctx.reply("Enter a unique holder key to start trading.");
@@ -66,9 +67,7 @@ bot.on("message", async (ctx) => {
         await ctx.reply("⚠️ Wrong input");
     } else {
         // Ako nije u procesu, odgovaramo podrazumevano
-        ctx.reply(`🚧 still under development! 
-        
-        This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! 🔧`);
+        ctx.reply(`🚧 still under development!`);
     }
 });
 
