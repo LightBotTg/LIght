@@ -352,8 +352,22 @@ bot.telegram.setMyCommands([
     { command: "chat", description: "Join our Telegram group" },
     { command: "help", description: "Where to ask questions" }
 ]);
+bot.startPolling();
+bot.launch({
+    allowedUpdates: ["message", "callback_query"]
+});
+bot.use((ctx, next) => {
+    if (ctx.message && ctx.message.text && ctx.message.text.startsWith("/")) {
+        console.log("Processing command:", ctx.message.text);
+    }
+    return next();
+});
 
 bot.launch();
+bot.on("message", (ctx) => {
+    console.log("Received message:", ctx.message.text);
+});
+
 bot.telegram.getMyCommands().then((commands) => {
     console.log("Registered commands:", commands);
 });
