@@ -345,7 +345,19 @@ bot.command("help", async (ctx) => {
     await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.)", { parse_mode: "Markdown" });
 });
 
+bot.telegram.setMyCommands([
+    { command: "start", description: "Show main menu" },
+    { command: "website", description: "Open our Website" },
+    { command: "twitter", description: "Open our Twitter" },
+    { command: "chat", description: "Join our Telegram group" },
+    { command: "help", description: "Where to ask questions" }
+]);
+
 bot.launch();
+bot.telegram.getMyCommands().then((commands) => {
+    console.log("Registered commands:", commands);
+});
+
 console.log("✅ Bot je pokrenut!");
 
 
