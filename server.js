@@ -104,12 +104,7 @@ bot.on("message", async (ctx) => {
     }
 });
 
-// Resetovanje stanja kada se klikne bilo koje drugo dugme (osim Buy & Sell i Coin Sniper)
-bot.action([
-    "profile", "wallets", "trades", "copy_trade", "settings", "positions", "refresh", "delete_message"
-], async (ctx) => {
-    setTimeout(() => resetUserState(ctx), 500); // Resetujemo stanje posle odgovora
-});
+
 
 
 // Brisanje poruke pritiskom na "Close"
