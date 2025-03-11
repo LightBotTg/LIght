@@ -27,8 +27,13 @@ Note: This is the beta version of Light. The bot is still under development, and
 });
 
 // Buy & Sell dugme
+// Čuvamo stanje korisnika
+const buySellState = new Map();
+
+// Buy & Sell dugme
 bot.action("buy_sell", async (ctx) => {
     try {
+        buySellState.set(ctx.from.id, "awaiting_token_contract"); // Postavljamo stanje
         await ctx.reply(
             "📌 Paste token contract to begin buy & sell ↔️",
             Markup.inlineKeyboard([
@@ -39,6 +44,34 @@ bot.action("buy_sell", async (ctx) => {
         console.error("❌ Greška pri slanju poruke:", err);
     }
 });
+
+// Kada korisnik pošalje poruku
+bot.on("message", async (ctx) => {
+    const userId = ctx.from.id;
+    const state = buySellState.get(userId);
+
+    if (state === "awaiting_token_contract") {
+        // Nakon prve poruke prelazimo na čekanje holder key-a
+        buySellState.set(userId, "awaiting_holder_key");
+        await ctx.reply("Enter a unique holder key to start trading.");
+    } else if (state === "awaiting_holder_key") {
+        // Ako korisnik unese nešto u ovoj fazi, dobiće poruku "Wrong input"
+        await ctx.reply("⚠️ Wrong input");
+    } else {
+        // Ako nije u procesu, odgovaramo podrazumevano
+        ctx.reply(`🚧 still under development! 
+        
+        This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! 🔧`);
+    }
+});
+
+// Resetovanje stanja kada se klikne bilo koje dugme (osim Buy & Sell)
+bot.action(/.*/, async (ctx) => {
+    if (ctx.match[0] !== "buy_sell") {
+        buySellState.delete(ctx.from.id);
+    }
+});
+
 
 // Coin Sniper dugme
 bot.action("coin_sniper", async (ctx) => {
@@ -224,7 +257,7 @@ function getSettingsKeyboard(userId) {
 }
 
 bot.action("positions", async (ctx) => {
-    await ctx.reply("Still under development.");
+    await ctx.reply("No open positions");
 });
 
 bot.action("refresh", (ctx) => ctx.reply("🔄 Refreshing..."));
