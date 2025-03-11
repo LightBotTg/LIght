@@ -304,13 +304,13 @@ bot.action("refresh", (ctx) => ctx.reply("🔄 Refreshing..."));
 
 
 // Kada korisnik pošalje bilo koju poruku, bot odgovara "Još uvek u razvoju"
-bot.on("message", (ctx) => {
-   
-    ctx.reply(`🚧 still under development! 
-        
-        This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! 🔧`);
-        setTimeout(() => resetUserState(ctx), 500);
+bot.on("message", async (ctx) => {
+    if (ctx.message.text && ctx.message.text.startsWith("/")) {
+        return; // Ako je poruka komanda, nemoj slati "still under development"
+    }
+    await ctx.reply(`🚧 still under development!`);
 });
+
 // Komanda /start - prikazuje glavni meni
 bot.command("start", async (ctx) => {
     await ctx.reply(
