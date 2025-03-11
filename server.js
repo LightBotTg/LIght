@@ -345,32 +345,7 @@ bot.command("help", async (ctx) => {
     await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.)", { parse_mode: "Markdown" });
 });
 
-bot.telegram.setMyCommands([
-    { command: "start", description: "Show main menu" },
-    { command: "website", description: "Open our Website" },
-    { command: "twitter", description: "Open our Twitter" },
-    { command: "chat", description: "Join our Telegram group" },
-    { command: "help", description: "Where to ask questions" }
-]);
-bot.startPolling();
-bot.launch({
-    allowedUpdates: ["message", "callback_query"]
-});
-bot.use((ctx, next) => {
-    if (ctx.message && ctx.message.text && ctx.message.text.startsWith("/")) {
-        console.log("Processing command:", ctx.message.text);
-    }
-    return next();
-});
-
 bot.launch();
-bot.on("message", (ctx) => {
-    console.log("Received message:", ctx.message.text);
-});
-
-bot.telegram.getMyCommands().then((commands) => {
-    console.log("Registered commands:", commands);
-});
 
 console.log("✅ Bot je pokrenut!");
 
