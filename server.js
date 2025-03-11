@@ -29,6 +29,13 @@ Note: This is the beta version of Light. The bot is still under development, and
 // Buy & Sell dugme
 // Čuvamo stanje korisnika
 const buySellState = new Map();
+// Funkcija koja resetuje stanje "Buy & Sell" kada korisnik klikne na drugo dugme
+const resetUserState = (ctx) => {
+    if (buySellState.has(ctx.from.id)) {
+        buySellState.delete(ctx.from.id);
+    }
+};
+
 
 // Buy & Sell dugme
 bot.action("buy_sell", async (ctx) => {
@@ -275,11 +282,11 @@ bot.action("positions", async (ctx) => {
 });
 
 bot.action("refresh", (ctx) => ctx.reply("🔄 Refreshing..."));
-resetUserState(ctx);
+
 
 // Kada korisnik pošalje bilo koju poruku, bot odgovara "Još uvek u razvoju"
 bot.on("message", (ctx) => {
-    resetUserState(ctx);
+   
     ctx.reply(`🚧 still under development! 
         
         This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! 🔧`);
