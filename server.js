@@ -2,6 +2,39 @@ require("dotenv").config();
 const { Telegraf, Markup } = require("telegraf");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+// Komanda /start - prikazuje glavni meni
+bot.command("start", async (ctx) => {
+    await ctx.reply(
+        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡`,
+        Markup.inlineKeyboard([
+            [Markup.button.callback("💰 Buy & Sell", "buy_sell"), Markup.button.callback("📌 Coin Sniper", "coin_sniper")],
+            [Markup.button.callback("😎 Profile", "profile"), Markup.button.callback("💳 Wallets", "wallets"), Markup.button.callback("🔮 Trades", "trades")],
+            [Markup.button.callback("🤖 Copy Trade", "copy_trade"), Markup.button.callback("⚙️ Settings", "settings")],
+            [Markup.button.callback("✨ Positions", "positions"), Markup.button.callback("🔄 Refresh", "refresh")],
+            [Markup.button.url("🌐 Website", "https://lightbot.org/"), Markup.button.url("✉️ Telegram", "https://t.me/lighonsolana")]
+        ])
+    );
+});
+
+// Komanda /website - bot šalje link ka web sajtu
+bot.command("website", async (ctx) => {
+    await ctx.reply("🌐 Visit our website: [Click here](https://lightbot.org/)", { parse_mode: "Markdown" });
+});
+
+// Komanda /twitter - bot šalje link ka Twitteru
+bot.command("twitter", async (ctx) => {
+    await ctx.reply("🐦 Follow us on Twitter: [Click here](https://x.com/lightbotsolana)", { parse_mode: "Markdown" });
+});
+
+// Komanda /chat - bot šalje link ka Telegram grupi
+bot.command("chat", async (ctx) => {
+    await ctx.reply("💬 Join our Telegram community: [Click here](https://t.me/lighonsolana)", { parse_mode: "Markdown" });
+});
+
+// Komanda /help - bot daje pomoćne informacije
+bot.command("help", async (ctx) => {
+    await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.", { parse_mode: "Markdown" });
+});
 
 // Glavni meni sa više dugmića
 bot.start((ctx) => {
@@ -269,39 +302,6 @@ bot.on("message", async (ctx) => {
     await ctx.reply("🚧 still under development!");
 });
 
-// Komanda /start - prikazuje glavni meni
-bot.command("start", async (ctx) => {
-    await ctx.reply(
-        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡`,
-        Markup.inlineKeyboard([
-            [Markup.button.callback("💰 Buy & Sell", "buy_sell"), Markup.button.callback("📌 Coin Sniper", "coin_sniper")],
-            [Markup.button.callback("😎 Profile", "profile"), Markup.button.callback("💳 Wallets", "wallets"), Markup.button.callback("🔮 Trades", "trades")],
-            [Markup.button.callback("🤖 Copy Trade", "copy_trade"), Markup.button.callback("⚙️ Settings", "settings")],
-            [Markup.button.callback("✨ Positions", "positions"), Markup.button.callback("🔄 Refresh", "refresh")],
-            [Markup.button.url("🌐 Website", "https://lightbot.org/"), Markup.button.url("✉️ Telegram", "https://t.me/lighonsolana")]
-        ])
-    );
-});
-
-// Komanda /website - bot šalje link ka web sajtu
-bot.command("website", async (ctx) => {
-    await ctx.reply("🌐 Visit our website: [Click here](https://lightbot.org/)", { parse_mode: "Markdown" });
-});
-
-// Komanda /twitter - bot šalje link ka Twitteru
-bot.command("twitter", async (ctx) => {
-    await ctx.reply("🐦 Follow us on Twitter: [Click here](https://x.com/lightbotsolana)", { parse_mode: "Markdown" });
-});
-
-// Komanda /chat - bot šalje link ka Telegram grupi
-bot.command("chat", async (ctx) => {
-    await ctx.reply("💬 Join our Telegram community: [Click here](https://t.me/lighonsolana)", { parse_mode: "Markdown" });
-});
-
-// Komanda /help - bot daje pomoćne informacije
-bot.command("help", async (ctx) => {
-    await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.", { parse_mode: "Markdown" });
-});
 
 bot.launch();
 
