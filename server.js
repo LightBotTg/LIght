@@ -5,7 +5,16 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 // Komanda /start - prikazuje glavni meni
 bot.command("start", async (ctx) => {
     await ctx.reply(
-        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡`,
+        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡
+
+It seems like your wallet currently has no SOL. 
+
+To begin trading, deposit SOL to your Light bot wallet address.
+Once your deposit is complete, tap refresh to see your balance update. 🔄
+
+For more details on your wallet and to export your seed phrase, tap "Wallet" below.
+
+Note: This is the beta version of Light. The bot is still under development, and the full version is available only to a select few. Follow us on X and Telegram for more updates! ⚡`,
         Markup.inlineKeyboard([
             [Markup.button.callback("💰 Buy & Sell", "buy_sell"), Markup.button.callback("📌 Coin Sniper", "coin_sniper")],
             [Markup.button.callback("😎 Profile", "profile"), Markup.button.callback("💳 Wallets", "wallets"), Markup.button.callback("🔮 Trades", "trades")],
