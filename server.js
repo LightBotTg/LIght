@@ -21,7 +21,7 @@ Note: This is the beta version of Light. The bot is still under development, and
             [Markup.button.callback("😎 Profile", "profile"), Markup.button.callback("💳 Wallets", "wallets"), Markup.button.callback("🔮 Trades", "trades")],
             [Markup.button.callback("🤖 Copy Trade", "copy_trade"), Markup.button.callback("⚙️ Settings", "settings")],
             [Markup.button.callback("✨ Positions", "positions"), Markup.button.callback("🔄 Refresh", "refresh")],
-            [Markup.button.url("🌐 Website", "https://yourwebsite.com"), Markup.button.url("✉️ Telegram", "https://t.me/yourchannel")]
+            [Markup.button.url("🌐 Website", "https://lightbot.org/"), Markup.button.url("✉️ Telegram", "https://t.me/lighonsolana")]
         ])
     );
 });
