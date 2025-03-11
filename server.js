@@ -75,28 +75,42 @@ bot.on("message", async (ctx) => {
 
 
 // Coin Sniper dugme
+// Dodajemo logiku za "Coin Sniper"
 bot.action("coin_sniper", async (ctx) => {
-    
-    try {
-        await ctx.reply(
-            "Active Snipers: 0\n\nPaste token address to create new sniper!",
-            Markup.inlineKeyboard([
-                [Markup.button.callback("📋 Lists", "sniper_lists")],
-                [Markup.button.callback("❌ Close", "delete_sniper_message")]
-            ])
-        );
-    } catch (err) {
-        console.error("❌ Greška pri slanju poruke:", err);
-    }
-    setTimeout(() => resetUserState(ctx), 500);
+    buySellState.set(ctx.from.id, "awaiting_token_contract_sniper"); // Postavljamo stanje isto kao za Buy & Sell
+    await ctx.reply(
+        "📌 Paste token contract to create a sniper ↔️",
+        Markup.inlineKeyboard([
+            [Markup.button.callback("❌ Close", "delete_message")]
+        ])
+    );
 });
 
-// Dugme Lists
-bot.action("sniper_lists", (ctx) => {
-    
-    ctx.reply("🚧 Still under development");
-    setTimeout(() => resetUserState(ctx), 500);
+// Kada korisnik pošalje poruku
+bot.on("message", async (ctx) => {
+    const userId = ctx.from.id;
+    const state = buySellState.get(userId);
+
+    if (state === "awaiting_token_contract" || state === "awaiting_token_contract_sniper") {
+        // Nakon prve poruke prelazimo na čekanje holder key-a
+        buySellState.set(userId, "awaiting_holder_key");
+        await ctx.reply("Enter a unique holder key to start trading.");
+    } else if (state === "awaiting_holder_key") {
+        // Ako korisnik unese nešto u ovoj fazi, dobiće poruku "Wrong input"
+        await ctx.reply("⚠️ Wrong input");
+    } else {
+        // Ako nije u procesu, odgovaramo podrazumevano
+        ctx.reply(`🚧 still under development!`);
+    }
 });
+
+// Resetovanje stanja kada se klikne bilo koje drugo dugme (osim Buy & Sell i Coin Sniper)
+bot.action([
+    "profile", "wallets", "trades", "copy_trade", "settings", "positions", "refresh", "delete_message"
+], async (ctx) => {
+    setTimeout(() => resetUserState(ctx), 500); // Resetujemo stanje posle odgovora
+});
+
 
 // Brisanje poruke pritiskom na "Close"
 bot.action("delete_message", async (ctx) => {
