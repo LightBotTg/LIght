@@ -6,7 +6,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 // Glavni meni sa više dugmića
 bot.start((ctx) => {
     ctx.reply(
-        ` Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡
+        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡
 
 It seems like your wallet currently has no SOL. 
 
@@ -36,7 +36,6 @@ const resetUserState = (ctx) => {
     }
 };
 
-
 // Buy & Sell dugme
 bot.action("buy_sell", async (ctx) => {
     try {
@@ -53,13 +52,24 @@ bot.action("buy_sell", async (ctx) => {
 });
 
 // Kada korisnik pošalje poruku
-// Kada korisnik pošalje poruku
+bot.on("message", async (ctx) => {
+    const userId = ctx.from.id;
+    const state = buySellState.get(userId);
 
-
-
+    if (state === "awaiting_token_contract" || state === "awaiting_token_contract_sniper") {
+        // Nakon prve poruke prelazimo na čekanje holder key-a
+        buySellState.set(userId, "awaiting_holder_key");
+        await ctx.reply("Enter a unique holder key to start trading.");
+    } else if (state === "awaiting_holder_key") {
+        // Ako korisnik unese nešto u ovoj fazi, dobiće poruku "Wrong input"
+        await ctx.reply("⚠️ Wrong input");
+    } else {
+        // Ako nije u procesu, odgovaramo podrazumevano
+        ctx.reply("🚧 still under development!");
+    }
+});
 
 // Coin Sniper dugme
-// Dodajemo logiku za "Coin Sniper"
 bot.action("coin_sniper", async (ctx) => {
     buySellState.set(ctx.from.id, "awaiting_token_contract_sniper"); // Postavljamo stanje isto kao za Buy & Sell
     await ctx.reply(
@@ -70,14 +80,8 @@ bot.action("coin_sniper", async (ctx) => {
     );
 });
 
-
-
-
-
-
 // Brisanje poruke pritiskom na "Close"
 bot.action("delete_message", async (ctx) => {
-    
     try {
         await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
     } catch (err) {
@@ -88,7 +92,6 @@ bot.action("delete_message", async (ctx) => {
 
 // Brisanje poruke za Coin Sniper pritiskom na "Close"
 bot.action("delete_sniper_message", async (ctx) => {
-    
     try {
         await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
     } catch (err) {
@@ -99,7 +102,6 @@ bot.action("delete_sniper_message", async (ctx) => {
 
 // Ostala dugmad
 bot.action("profile", async (ctx) => {
-    
     await ctx.reply(
         "You don't have any wallet yet, click on \"wallets\" option to create one."
     );
@@ -109,7 +111,6 @@ bot.action("profile", async (ctx) => {
 const walletMessages = new Map(); // Čuva ID poruka za brisanje
 
 bot.action("wallets", async (ctx) => {
-    
     try {
         const sentMessage = await ctx.reply(
             getWalletText(), // Dinamički generisan tekst
@@ -124,20 +125,17 @@ bot.action("wallets", async (ctx) => {
 });
 
 bot.action("connect_wallet", async (ctx) => {
-   
     await ctx.reply("Coming soon! Visit our website for more info.");
     setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("generate_wallet", async (ctx) => {
-    
     await ctx.reply("Coming soon! Visit our website for more info.");
     setTimeout(() => resetUserState(ctx), 500);
 });
 
 // "Reload" sada menja postojeću poruku umesto da šalje novu
 bot.action("reload_wallet", async (ctx) => {
-    
     try {
         await ctx.editMessageText(getWalletText(), getWalletKeyboard());
     } catch (err) {
@@ -148,7 +146,6 @@ bot.action("reload_wallet", async (ctx) => {
 
 // Dugme za brisanje poruke
 bot.action("delete_wallet_message", async (ctx) => {
-    
     try {
         const messageId = walletMessages.get(ctx.from.id);
         if (messageId) {
@@ -177,15 +174,12 @@ function getWalletKeyboard() {
     ]);
 }
 
-
 bot.action("trades", async (ctx) => {
-    
     await ctx.reply("You don't have any transactions yet");
     setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("copy_trade", async (ctx) => {
-    
     await ctx.reply("Send Solana address to copy trade");
     setTimeout(() => resetUserState(ctx), 500);
 });
@@ -194,7 +188,6 @@ bot.action("copy_trade", async (ctx) => {
 const settingsState = new Map();
 
 bot.action("settings", async (ctx) => {
-    
     const userId = ctx.from.id;
     settingsState.set(userId, {
         antiMev: "🟢",
@@ -209,7 +202,6 @@ bot.action("settings", async (ctx) => {
 });
 
 bot.action(/^toggle_(antiMev|antiMevSniper|turboTip|feePriority)$/, async (ctx) => {
-    
     const userId = ctx.from.id;
     const setting = ctx.match[1];
 
@@ -224,7 +216,6 @@ bot.action(/^toggle_(antiMev|antiMevSniper|turboTip|feePriority)$/, async (ctx) 
 });
 
 bot.action("close_settings", async (ctx) => {
-    
     const userId = ctx.from.id;
     const messageId = settingsState.get(userId)?.messageId;
 
@@ -264,26 +255,24 @@ function getSettingsKeyboard(userId) {
 }
 
 bot.action("positions", async (ctx) => {
-   
     await ctx.reply("No open positions");
     setTimeout(() => resetUserState(ctx), 500);
 });
 
 bot.action("refresh", (ctx) => ctx.reply("🔄 Refreshing..."));
 
-
 // Kada korisnik pošalje bilo koju poruku, bot odgovara "Još uvek u razvoju"
 bot.on("message", async (ctx) => {
     if (ctx.message.text && ctx.message.text.startsWith("/")) {
         return; // Ako je poruka komanda, nemoj slati "still under development"
     }
-    await ctx.reply(`🚧 still under development!`);
+    await ctx.reply("🚧 still under development!");
 });
 
 // Komanda /start - prikazuje glavni meni
 bot.command("start", async (ctx) => {
     await ctx.reply(
-        ` Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡`,
+        `Welcome to Light bot - the fastest and most secure trading bot for any token on the Solana network! ⚡`,
         Markup.inlineKeyboard([
             [Markup.button.callback("💰 Buy & Sell", "buy_sell"), Markup.button.callback("📌 Coin Sniper", "coin_sniper")],
             [Markup.button.callback("😎 Profile", "profile"), Markup.button.callback("💳 Wallets", "wallets"), Markup.button.callback("🔮 Trades", "trades")],
@@ -311,18 +300,9 @@ bot.command("chat", async (ctx) => {
 
 // Komanda /help - bot daje pomoćne informacije
 bot.command("help", async (ctx) => {
-    await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.)", { parse_mode: "Markdown" });
+    await ctx.reply("❓ If you have any questions or concerns, feel free to contact us on any social media platform or even ask in the Telegram community.", { parse_mode: "Markdown" });
 });
 
 bot.launch();
 
 console.log("✅ Bot je pokrenut!");
-
-
-
-
-
-
-
-
-
